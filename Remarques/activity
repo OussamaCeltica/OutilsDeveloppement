@@ -1,0 +1,169 @@
+-Détécter si le system a killed Le Process quan il a été onStop ():
+
+super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_parametrage);
+        if (savedInstanceState != null) {
+             //Oui il a tué
+        }else {
+           // non il n a pas tué ..
+
+       }
+
+_____________________________
+-Fermer tous les Activities et lance une seul autre:
+
+ Intent intent = new Intent(getApplicationContext(), Login.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+___________________________________
+-Reafficher en top une activity deja dans la pile des des activity:
+
+Intent i=new Intent(c, SearchBook.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                c.startActivity(i);
+
+___________________________________
+-Creating a instance of an activity that wil be destroyed automatucally when starting another activity:
+
+add to activity manifest noHistory="true"
+
+____________________________
+-Get all running activities:
+
+try {
+                    ActivityInfo[] list = getPackageManager().getPackageInfo(getPackageName(),PackageManager.GET_ACTIVITIES).activities;
+
+                    for(int ii = 0;ii< list.length;ii++)
+                    {
+
+                        Log.e("kkk","name= " + list[ii].name.replace(list[ii].name.substring(0,list[ii].name.lastIndexOf(".")),""));
+
+                    }
+                }
+
+                catch (PackageManager.NameNotFoundException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+
+
+_____________________________
+
+-Animation lors startactivity:
+
+----------Methode 1 Using Library folder ----------------
+PS: it work only for API greater than 15 ..
+ajouter dans gradle:project:
+
+allprojects {
+    repositories {
+       ...
+        maven {url 'https://jitpack.io'}
+    }
+}
+###########
+ajouter dans gradle biuld:
+
+dependencies {
+      implementation 'com.github.mohammadatif:Animatoo:master'
+}
+
+###########
+
+startActivity(new Intent(context, TargetActivity.class));
+Animatoo.animateZoom(context);  //fire the zoom animation
+
+Utilisation:
+
+List des anim:
+Animatoo.animateZoom(context);
+Animatoo.animateFade(context);
+Animatoo.animateWindmill(context);
+Animatoo.animateSpin(context);
+Animatoo.animateDiagonal(context);
+Animatoo.animateSplit(context);
+Animatoo.animateShrink(context);
+Animatoo.animateCard(context);
+Animatoo.animateInAndOut(context);
+Animatoo.animateSwipeLeft(context);
+Animatoo.animateSwipeRight(context);
+Animatoo.animateSlideLeft(context);
+Animatoo.animateSlideRight(context);
+Animatoo.animateSlideDown(context);
+Animatoo.animateSlideUp(context);
+
+----------Methode 2 Using Library intentanimation: ----------------
+
+ajouter dans gradle:project:
+
+allprojects {
+    repositories {
+       ...
+        maven {url 'https://jitpack.io'}
+    }
+}
+###########
+ajouter dans gradle biuld:
+
+dependencies {
+     compile 'com.github.hajiyevelnur92:intentanimation:1.0'
+}
+
+##########
+Utilisation:
+
+import static maes.tech.intentanim.CustomIntent.customType;
+//MainActivity or any activity name
+protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        //.....//
+        
+        //here is library
+        customType(MainActivity.this,"here is string name");
+}
+ 
+Anim:       
+*left-to-right
+*right-to-left
+*bottom-to-up
+*up-to-bottom
+*fadein-to-fadeout
+*rotateout-to-rotatein
+
+----------Methode 3 Using Anim folder ----------------
+
+dans res folder on va creer un folder anim
+puis on vas cree des ficher xml pour des animations ex:
+
+fade.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <alpha android:duration="500" android:fromAlpha="0.0" android:toAlpha="1.0" />
+</set>
+
+translate.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <translate android:duration="1000" android:fromXDelta="1000.0" android:fromYDelta="1000.0" />
+</set>
+
+rotate.xml:
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <rotate android:duration="500" android:fromDegrees="90" android:toDegrees="180" />
+</set>
+
+#dans activity:
+
+startActivity(new Intent(Accueil.this,testFrag.class));
+                overridePendingTransition(R.anim.fade,R.anim.translate);
+
+PS: l animation va s appliquer sur la 2eme activity , la premier va directement hidé ..
+
+
+
+
+

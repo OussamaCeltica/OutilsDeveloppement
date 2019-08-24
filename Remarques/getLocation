@@ -1,0 +1,131 @@
+//this need internet ..
+
+
+ <uses-feature android:name="android.hardware.location.gps" />
+j
+
+ public void   getLocation(AppCompatActivity c, final  doOnGetGPS doThis ){
+        final FusedLocationProviderClient fusedLocationClient;
+        final LocationRequest locationRequest;
+        final LocationCallback locationCallback;
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(c);
+        if (ActivityCompat.checkSelfPermission(c, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(c, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //test si la version SDK d'android superieur a 23 donc il faut ajouter la permission au temps reel (la nouveauté d android) et les version précédente se faire au moment d instalation .
+            if (Build.VERSION.SDK_INT >= 23) {
+                // afficher  le dialog de pr koi on demande de permission  ..
+                if(!c.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
+                    // l'affichage de box de permission avec les permission qu on souhaite a l utiliser est cette methode va appelé public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) et indiquer dans grantResults si ill accepté ou nn
+
+                    c.requestPermissions(new String []{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
+                            123);
+
+                }
+            }
+
+            return ;
+        }
+
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    Log.e("ddd","mazal");
+                    return;
+                }
+                for (Location e:locationResult.getLocations()){
+                    Log.e("ddd","LONG: "+e.getLongitude());
+                }
+            }
+        };
+
+        //demander de rafraichir le GPS ..
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+
+
+        //récupéré la location GPS ..
+        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    fusedLocationClient.removeLocationUpdates(locationCallback);
+                    doThis.onSuccess(location);
+                }
+                else {
+                    doThis.onEchec();
+                }
+            }
+        });
+
+
+    }
+
+    interface doOnGetGPS{
+        void onEchec();
+        void onSuccess(Location l);
+    }
+
+____________________________________________________
+
+  public void getLocation(AppCompatActivity c, final doOnGetGPS d){
+        final LocationManager locationManager;
+        locationManager = (LocationManager) c.getSystemService(c.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(c, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(c, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //test si la version SDK d'android superieur a 23 donc il faut ajouter la permission au temps reel (la nouveauté d android) et les version précédente se faire au moment d instalation .
+            if (Build.VERSION.SDK_INT >= 23) {
+                // afficher  le dialog de pr koi on demande de permission  ..
+                if(!c.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
+                    // l'affichage de box de permission avec les permission qu on souhaite a l utiliser est cette methode va appelé public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) et indiquer dans grantResults si ill accepté ou nn
+
+                    c.requestPermissions(new String []{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
+                            123);
+
+                }
+            }
+
+            return ;
+        }
+
+        LocationListener locationListener=new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                locationManager.removeUpdates(this);
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+               d.onGPSDisable();
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+        };
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+        if (locationManager != null)
+        {
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location != null) {
+               d.onSuccess(location);
+                locationManager.removeUpdates(locationListener);
+            }
+        }
+    }
+
+    public interface doOnGetGPS {
+        void onSuccess(Location l);
+        void onGPSDisable();
+    }

@@ -1,0 +1,4 @@
+ DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String date = df.format(Calendar.getInstance().getTime());
+
+

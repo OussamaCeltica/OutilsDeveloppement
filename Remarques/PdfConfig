@@ -1,0 +1,174 @@
+-GRadle:
+compile 'com.github.HendrixString:Android-PdfMyXml:v1.0.1'
+
+allprojects {
+    repositories {
+        maven { url "https://jitpack.io" }
+        google()
+        jcenter()
+        mavenCentral()
+    }
+}
+
+____________________
+CReation du PDF puis Imprimer:
+
+AbstractViewRenderer page = new AbstractViewRenderer(MainActivity.this, R.layout.activity_main) {
+            private String _text;
+
+            public void setText(String text) {
+                _text = text;
+            }
+
+            @Override
+            protected void initView(View view) {
+                //TextView tv_hello = (TextView)view.findViewById(R.id.tv_hello);
+               // tv_hello.setText(_text);
+            }
+        };
+
+        // you can reuse the bitmap if you want
+        page.setReuseBitmap(true);
+
+        new PdfDocument.Builder(MainActivity.me).addPage(page).orientation(PdfDocument.A4_MODE.PORTRAIT)
+                .progressMessage(R.string.app_name).progressTitle(R.string.app_name)
+                .renderWidth(600).renderHeight(700)
+                .saveDirectory(MainActivity.me.getExternalFilesDir(null)+"/NomDossierOuRien");
+                .filename("test")
+                .listener(new PdfDocument.Callback() {
+                    @Override
+                    public void onComplete(File file) {
+                        Log.i(PdfDocument.TAG_PDF_MY_XML, "Complete");
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.i(PdfDocument.TAG_PDF_MY_XML, "Error");
+                    }
+                }).create().createPdf(this);
+________________________________________________________
+Imprimer Un PDF qui exite deja:
+Creation de l adapter:
+
+package com.example.celtica.tstsql;
+
+import android.content.Context;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.CancellationSignal;
+import android.os.ParcelFileDescriptor;
+import android.print.PageRange;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintDocumentInfo;
+import android.print.pdf.PrintedPdfDocument;
+import android.support.annotation.RequiresApi;
+import android.support.v7.app.AppCompatActivity;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+/**
+ * Created by celtica on 23/11/18.
+ */
+
+@RequiresApi(api = Build.VERSION_CODES.KITKAT)
+class MyPrintDocumentAdapter extends PrintDocumentAdapter {
+
+    Context context = null;
+    String pathName = "";
+    public MyPrintDocumentAdapter(Context ctxt, String pathName) {
+        context = ctxt;
+        this.pathName = pathName;
+    }
+    @Override
+    public void onLayout(PrintAttributes printAttributes, PrintAttributes printAttributes1, CancellationSignal cancellationSignal, LayoutResultCallback layoutResultCallback, Bundle bundle) {
+        if (cancellationSignal.isCanceled()) {
+            layoutResultCallback.onLayoutCancelled();
+        }
+        else {
+            PrintDocumentInfo.Builder builder=
+                    new PrintDocumentInfo.Builder("Order Item");
+            builder.setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
+                    .setPageCount(PrintDocumentInfo.PAGE_COUNT_UNKNOWN)
+                    .build();
+            layoutResultCallback.onLayoutFinished(builder.build(),
+                    !printAttributes1.equals(printAttributes));
+        }
+    }
+
+    @Override
+    public void onWrite(PageRange[] pageRanges, ParcelFileDescriptor parcelFileDescriptor, CancellationSignal cancellationSignal, WriteResultCallback writeResultCallback) {
+        InputStream in=null;
+        OutputStream out=null;
+        try {
+            File file = new File(pathName);
+            in = new FileInputStream(file);
+            out=new FileOutputStream(parcelFileDescriptor.getFileDescriptor());
+
+            byte[] buf=new byte[16384];
+            int size;
+
+            while ((size=in.read(buf)) >= 0
+                    && !cancellationSignal.isCanceled()) {
+                out.write(buf, 0, size);
+            }
+
+            if (cancellationSignal.isCanceled()) {
+                writeResultCallback.onWriteCancelled();
+            }
+            else {
+                writeResultCallback.onWriteFinished(new PageRange[] { PageRange.ALL_PAGES });
+            }
+        }
+        catch (Exception e) {
+            writeResultCallback.onWriteFailed(e.getMessage());
+
+        }
+        finally {
+            try {
+                in.close();
+                out.close();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }}
+
+======== Pour imprimer:
+PrintManager printManager=(PrintManager)getSystemService(Context.PRINT_SERVICE);
+
+
+            MyPrintDocumentAdapter printAdapter = new MyPrintDocumentAdapter(getApplicationContext(),getExternalFilesDir(null)+"/test.pdf" );
+
+        printManager.print("Document", printAdapter,new PrintAttributes.Builder().build());
+
+________________________________________________________
+Imprimer un document html:
+
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void createWebPrintJob(WebView webView) {
+
+        PrintManager printManager = (PrintManager) this
+                .getSystemService(Context.PRINT_SERVICE);
+
+        PrintDocumentAdapter printAdapter =
+                webView.createPrintDocumentAdapter("MyDocument");
+
+        String jobName = getString(R.string.app_name) + " Print Test";
+
+        printManager.print(jobName, printAdapter,
+                new PrintAttributes.Builder().build());
+
+
+        
+    }
+
+
+
+

@@ -1,0 +1,83 @@
+-Enlever le focus pour tous les EditText:
+ajouter au ROOT:
+ android:focusable="true"
+    android:focusableInTouchMode="true"
+
+-desactiver le clavier pour un edittext:
+codebar.setShowSoftInputOnFocus(false);
+
+-Ajouter le butoon next dans clavier:
+si vous avez un seul edittext dans la ligne: android:singleLine="true"
+
+sinon, suppose u have 4 edittext in row so first three editext u set below,
+
+android:imeOptions="actionNext"
+and last one editext u set
+
+android:imeOptions="actionDone"
+u add line so add,Use
+
+  android:singleLine="true" 
+
+-focusi un edittext: inputSearch.requestFocus();
+
+_____________________
+-On Text Change:
+EditText chercher=(EditText)findViewById(R.id.chercher_op);
+        chercher.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+               //mettre ton code ici ..
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+__________________________________
+Pour le Scanner avec le terminal:
+
+
+EditText chercher=(EditText)findViewById(R.id.chercher_op);
+        chercher.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+               //mettre ton code ici ..
+                   if(dejaScan==2){
+                  
+                    Log.e("ttt ",s.toString());
+                    chercher.setText(s);
+                    dejaScan=0;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+______________________________________
+-Changer la color de cursor:
+
+ android:textCursorDrawable="@drawable/cursor_color"
+
+dans DRawable:
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+    <size android:width="1dp" />
+    <solid android:color="@color/White"  />
+</shape>
+

@@ -1,0 +1,17 @@
+-Creation:
+il faut créé un fichier XML dans DRawable ..
+
+-XML:
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item >
+        <shape android:shape="rectangle">
+            <corners android:radius="26dp" />
+            <gradient android:startColor="@color/AppColorBG" android:endColor="@color/AppColorBG" />
+
+
+        </shape>
+
+    </item>
+</selector>
+

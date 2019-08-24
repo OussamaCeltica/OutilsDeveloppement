@@ -1,0 +1,16 @@
+-installation:
+
+compile 'com.github.barteksc:android-pdf-viewer:2.8.2'
+
+-ajouter au layout:
+<com.github.barteksc.pdfviewer.PDFView
+        android:id="@+id/pdfView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+-add pdf file choice:
+pdfView.fromUri(Uri).load()//from storage
+pdfView.fromFile(File).load()
+pdfView.fromBytes(byte[]).load()
+pdfView.fromStream(InputStream).load()//from server ..
+pdfView.fromAsset(String).load()

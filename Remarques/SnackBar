@@ -1,0 +1,11 @@
+-Snckabar et une bar qui s affiche en bottom d activity:
+
+
+Snackbar.make(rootView,
+                        "This is a simple Snackbar", Snackbar.LENGTH_LONG)
+                        .setAction("CLOSE", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // Custom action
+                            }
+                        }).show();

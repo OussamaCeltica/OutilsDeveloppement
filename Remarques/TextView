@@ -1,0 +1,30 @@
+Pour Ajouter des Span a un textview:
+
+Methode 1:
+textview.setText(Html.fromHtml("<div><font color='red'>simple</font>"+items.get(position).code+"</div>"));
+
+methode2 using SpannableString:
+
+SpannableString s=new SpannableString(items.get(position).code);
+
+//changer la couleur
+                 s.setSpan(
+                        new ForegroundColorSpan(Color.RED),
+                        0, 4,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                );
+              
+                textview.item1.setText(s);
+//text en GRAS
+s.setSpan(
+    new StyleSpan(BOLD),
+    8, spannable.length,
+    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+);
+textview.item1.setText(s);
+
+
+
+REMARQUE:
+On peut meme appliquer des event sur les span ..
+https://www.youtube.com/watch?v=E4xSjGZWR3E

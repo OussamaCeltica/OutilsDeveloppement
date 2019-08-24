@@ -1,0 +1,12 @@
+AlertDialog.Builder mb = new AlertDialog.Builder(c); //c est l activity non le context ..
+
+                    View v= c.getLayoutInflater().inflate(R.layout.div_add_num,null);
+                    TextView valider=(TextView) v.findViewById(R.id.validerAddNewNum);
+                    final EditText num=(EditText)v.findViewById(R.id.newNum);
+
+                    mb.setView(v);
+                    final AlertDialog ad=mb.create();
+                    ad.show();
+                    ad.setCanceledOnTouchOutside(false); //ne pas fermer on click en dehors ..
+                    ad.setCancelable(false); //désactiver le button de retour ..
+ 

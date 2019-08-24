@@ -1,0 +1,95 @@
+-Connect database:
+
+<?php
+ 
+    
+ try {
+$bdd = new PDO ('mysql:host=localhost;dbname=id9303611_client_db;charset=utf8','id9303611_client_user','clientmdp');
+echo"Gooood";
+}
+
+catch (Exception $e)
+{
+    die('Erreur:'.$e ->getmMssage());
+}
+
+
+
+
+?>
+
+
+_________________________
+<?php
+/* Exécute une requête préparée en associant des variables PHP */
+$calories = 150;
+$couleur = 'rouge';
+$req = $db ->prepare('SELECT nom, couleur, calories
+    FROM fruit
+    WHERE calories < ? AND couleur = ?');
+$req->bindValue(1, $calories, PDO::PARAM_INT);
+$req->bindValue(2, $couleur, PDO::PARAM_STR);
+$req->execute();
+?>
+
+_______________________
+
+-Insert with PostRequest5:
+
+dans la mthode write donné la request puis un hashmap qui contient l indice de variable avec sa valeur et , et le nombre des 
+valeurs a inséré ..
+dans Php:
+
+$nbrElem=$_POST['nbrElem'];
+
+$req = $db ->prepare($_POST['query']);
+
+$i=1;
+while($i <= $nbrElem){
+$req->bindValue($i, $calories);
+$i++;
+}
+$req->execute();
+
+
+_____________________________
+
+Read with PostRequest5:
+
+dans la mthode read donné la requete puis un hashmap qui contient l indice de variable avec sa valeur et , et le nombre des 
+valeurs a bindé s il existe ..
+dans Php:
+
+$nbrElem=$_POST['nbrElem'];
+
+$req = $db ->prepare($_POST['query']);
+
+$i=1;
+while($i <= $nbrElem){
+$req->bindValue($i, $calories);
+$i++;
+}
+$req->execute();
+$req ->closeCursor();
+$donnée= $req->fetchAll();
+_______________________________
+while ($donnees = $reponse->fetch())
+{
+//pour parcourir un par un ..
+}
+____________________________________________
+
+-PHP TRANSACTION
+
+try {  
+ 
+  $dbh->beginTransaction();
+  $dbh->exec("insert into staff (id, first, last) values (23, 'Joe', 'Bloggs')");
+  $dbh->exec("insert into salarychange (id, amount, changedate) 
+      values (23, 50000, NOW())");
+  $dbh->commit();
+
+} catch (Exception $e) {
+  $dbh->rollBack();
+  echo "Failed: " . $e->getMessage();
+}

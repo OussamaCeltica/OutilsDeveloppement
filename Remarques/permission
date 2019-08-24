@@ -1,0 +1,104 @@
+
+__________________________________
+Structure générale d une permission android:
+
+//au debut il faut qu on récupère le service qu on veut l acceder Ex: TelephonyManager ,
+ LoacationManager ..
+
+et on l instancier avec EX: TelephonyManager=(TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+ou:  LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+-2èment: 
+Un Exemple de GPS:
+
+Location getLocation(){
+        Location myLoc=null;
+
+        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        //test si on a pas deja la permission de consulter se service ou oui ..
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            //test si la version SDK d'android superieur a 23 donc il faut ajouter la permission au temps reel (la nouveauté d android) et les version précédente se faire au moment d instalation .
+            if (Build.VERSION.SDK_INT >= 23) {
+                // afficher  le dialog de pr koi on demande de permission  ..
+                if(!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
+                     // l'affichage de box de permission avec les permission qu on souhaite a l utiliser est cette methode va appelé public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) et indiquer dans grantResults si ill accepté ou nn
+
+                    requestPermissions(new String []{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
+                            123);
+
+                    return null;//l objet myLoc va etre null si il na pas dit wéé 
+
+
+
+                }
+            }
+            return null;// null si les permission ne sont pas vérifié ..
+        }
+
+// si tout est bien je vait consulter le service avec le manager et je fait ce que je veut 
+
+        myLoc=lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(myLoc==null){
+
+            myLoc=lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+
+        }
+
+        return myLoc;
+    }
+
+//cette mathode on va l appelé pour tt demande d une permission donc pour différenier le permissions il faut test le request avec une switch ..
+
+@Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        switch (requestCode){
+            case REQ_CODE :{ //si par example le code 123 de GPS qui invoqué cette methode ..	
+                if (grantResults[1]==PackageManager.PERMISSION_GRANTED){
+
+                }else {
+                    // si il na pas accecpté un message pour l informer qu on peut paq continuer ou je c pas quoi ..
+                    Toast.makeText(this,"Mafihach",Toast.LENGTH_LONG).show();
+                }
+
+                break;
+
+
+            }
+
+
+            default: super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        }
+
+    }
+
+______________________________
+-get Location Pour les téléphone mhalbine il faut:
+Acceder au moins une fois a google map est activé la position ..
+
+__________________________________
+
+-Camera permission:
+
+if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(Accueil.this, new String[] {Manifest.permission.CAMERA}, 8);
+
+            }else {
+}
+
+______________________________
+
+//region storage permission
+        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
+            //File write logic here
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 5);
+            return;
+        }
+
+
+
+

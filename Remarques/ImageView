@@ -1,0 +1,55 @@
+
+Circulaire Image:
+
+install:
+implementation 'de.hdodenhof:circleimageview:3.0.0'
+
+PS:
+in picasso Use: "noFade " because it will err ..
+
+use:
+<de.hdodenhof.circleimageview.CircleImageView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_image"
+    android:layout_width="96dp"
+    android:layout_height="96dp"
+    android:src="@drawable/profile"
+    app:civ_border_width="2dp"
+    app:civ_border_color="#FF000000"/>
+
+_____________________________
+
+-GIFIMAGEVIEW:
+
+implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.+'
+
+<pl.droidsonroids.gif.GifImageView
+       android:id="@+id/img"
+        android:layout_width="123dp"
+        android:layout_height="200dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/wait"/>
+
+_______________________________
+
+-Get Image from Drawable by name:
+
+final ImageView img=(ImageView)findViewById(R.id.img);
+
+          final int resourceId = getResources().getIdentifier("img_name", "drawable",
+                  getApplicationContext().getPackageName());
+        img.setImageResource(resourceId);
+
+//img_name on sepecéfier que le nom on spécifie pas l extension ...
+
+_______________________________
+-Convert Drawable to Bitmap:
+
+METH1: Bitmap myLogo = ((BitmapDrawable)getResources().getDrawable(R.drawable.logo)).getBitmap();
+METH2:Bitmap myLogo = BitmapFactory.decodeResource(context.getResources(), R.drawable.my_drawable);
+METH3:Bitmap myLogo = ((BitmapDrawable) ResourcesCompat.getDrawable(context.getResources(), R.drawable.logo, null)).getBitmap();
+
+
+
+
+

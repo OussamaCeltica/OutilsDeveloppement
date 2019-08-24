@@ -1,0 +1,11 @@
+https://www.youtube.com/watch?v=6Oo-9Can3H8&list=PLhfHPmPYPPRl0LntrCBnQD5ln6lnqqoms
+
+ExecutorService service=Executors.newFixedThreadPool(NbrTHread);
+//Or public ExecutorService es=Executors.newSingleThreadExecutor();
+
+for(i=0 hata 10){
+service.execute(new Thread());
+}
+
+c est une file des thread qui seront exécuté en série l un d apres l autre , NbrThread si le nombre maximale 
+de size of file

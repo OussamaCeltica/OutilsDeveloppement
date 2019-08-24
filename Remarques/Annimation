@@ -1,0 +1,104 @@
+-Appliquer l animation directement a un View:
+
+view.animate().alpha(0.f)
+                        .translationX(200f)
+                        .setDuration(5000);
+//on peut faire rotation,scale,translate,alpha ..
+//on peut faire setDuration,setDelay, ..
+
+RQ: cet animation s applique comme suit: Caractere=CaracCurrent+ValueAnim
+
+
+
+____________________________________________________________________
+
+/*--------------- Animation Avec ObjectAnimator --------------*
+#Learn about ObjectAnimator:
+
+-Translate X et Y:
+ObjectAnimator oa=ObjectAnimator.ofFloat(view,typeAnim,values);
+OR: final ObjectAnimator oa=ObjectAnimator.ofFloat(print,"translationY",0f,300f); // c mieu car il indique pos depart et pos fin tq pos_dep=0 indique que depuis la position actuel de View et si sup a 0 comme c est posActuel+Valeur
+        
+//type Anim peut etre: "x","y" 
+//values: des float ..
+
+
+-Animation OPacité et Rotation:
+ObjectAnimator oa=ObjectAnimator.ofFloat(view,typeAnim,value1,value);
+//type Anim peut etre: View.ALPHA ou "rotaion"
+//value1: 1.0f pour Alpha et 0f pour rotation
+//value2: 0.0f pour Alpha et 360f pour rotation
+
+
+-Animation de Scal width and height:
+ v.setPivotY(0f);
+    
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(v, "scaleY", 2f);
+        scaleY.setInterpolator(new DecelerateInterpolator());
+        scaleY.start();
+       
+-AnimationSet:
+AnimationSet at=new AnimationSet();
+at.playTogether(ObjectAnimator1,ObjectAnimator2); // l animation en parallèl ..
+
+------------Example:----------
+final ObjectAnimator oa=ObjectAnimator.ofFloat(print,"Y",0f);
+        oa.setDuration(1000);
+        oa.setStartDelay(1000);
+        oa.setRepeatMode(ValueAnimator.RESTART);
+
+
+        print.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                oa.start();
+            }
+        });
+
+
+
+
+_______________________________________
+-On peut l ajouter d apres resource file:
+
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="1000"
+    android:valueTo="200"
+    android:valueType="floatType"
+    android:propertyName="y"
+    android:repeatCount="1"
+    android:repeatMode="reverse"/>
+
+OR:
+
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+                android:duration="1000"
+                android:repeatCount="1"
+                android:repeatMode="reverse">
+    <propertyValuesHolder android:propertyName="x" android:valueTo="400"/>
+    <propertyValuesHolder android:propertyName="y" android:valueTo="200"/>
+</objectAnimator>
+
+PropertyValueHolder can be:
+
+<propertyValuesHolder android:propertyName="x" >
+    <keyframe android:fraction="0" android:value="800" />
+    <keyframe android:fraction=".2"
+              android:interpolator="@android:anim/accelerate_interpolator"
+              android:value="1000" />
+    <keyframe android:fraction="1"
+              android:interpolator="@android:anim/accelerate_interpolator"
+              android:value="400" />
+</propertyValuesHolder>
+<propertyValuesHolder android:propertyName="y" >
+    <keyframe/>
+    <keyframe android:fraction=".2"
+              android:interpolator="@android:anim/accelerate_interpolator"
+              android:value="300"/>
+    <keyframe android:interpolator="@android:anim/accelerate_interpolator"
+              android:value="1000" />
+</propertyValuesHolder>
+
+
+
+

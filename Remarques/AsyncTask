@@ -1,0 +1,4 @@
+-Par defautle lancement de plusieurs asyncTask sera considéré comme en série la fin d un déclenche l autre ..
+
+-Pour le Parallel Execution:
+You can opt into parallel execution by replacing execute() with executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).

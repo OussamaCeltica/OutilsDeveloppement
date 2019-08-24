@@ -1,0 +1,22 @@
+#La Class Formatter:
+la classe formatter est une classe qui nous permet de créé un fichier spécifique leur force est de
+structurer ce fichier selon une format précise lors d ecrit dedans ..
+
+Formatter f=new Formatter(NomFile); // create a file or open it ..
+
+-Write into file:
+
+f.format("Format ex: %s %n %s","Oussama","22","master");
+f.close();
+
+-Read from file who has a Format:
+
+Scanner x=new (new File(FilePath));
+
+while(x.hasNext()){
+//x.next() il part au element suivant de la ligne ..
+  System.out.printf("%s %n %s",x.next(),x.next(),x.next());
+
+}
+
+

@@ -1,0 +1,26 @@
+dependencies {
+    implementation "com.android.support:support-compat:27.1.1"
+}
+
+ NOTIFICATION_ID++;
+
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    CharSequence name = "Notification channel name";
+                    int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                    NotificationChannel channel = new NotificationChannel("ID1", name, importance);
+                    channel.setDescription("Notification channel description");
+                    // Enregister le canal sur le système : attention de ne plus rien modifier après
+                    NotificationManager notificationManager = getSystemService(NotificationManager.class);
+                    Objects.requireNonNull(notificationManager).createNotificationChannel(channel);
+                }
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "ID1")
+                        .setSmallIcon(R.drawable.ls_stock_icon)
+                        .setContentTitle("LS STOCK")
+                        .setContentText("Préparation Prête ..")
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText("Much longer text that cannot fit one line..."))
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                notificationManager.notify(NOTIFICATION_ID, builder.build());

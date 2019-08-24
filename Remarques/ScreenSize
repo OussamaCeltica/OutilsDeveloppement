@@ -1,0 +1,4 @@
+Dimension en pixel:
+DisplayMetrics metrics = new DisplayMetrics();
+getWindowManager().getDefaultDisplay().getMetrics(metrics);
+metrics.heightPixels

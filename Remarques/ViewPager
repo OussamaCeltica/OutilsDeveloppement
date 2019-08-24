@@ -1,0 +1,144 @@
+C est un slider:
+
+
+etape1:
+Creation d un fragment charger au display de layout:
+
+import android.content.Context;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+
+public class pageFrag extends Fragment {
+    
+      Item t;//notre objet qui contien les donnée d affichage ..
+ 
+    public pageFrag() {
+        // Required empty public constructor
+    }
+
+
+    // TODO: Rename and change types and number of parameters
+    public static pageFrag newInstance(Item t) {
+        pageFrag fragment = new pageFrag();
+        fragment.t=t;
+        
+        Bundle args = new Bundle();
+        //args.putInt("pos", pos);
+        //args.putInt(KEY_COLOR, param2);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+          
+          //pour multiple layout il faut tester l instance d item t returner une view laquelle vous voulez ex: if (t instance of video) ..etc
+
+
+        // 3 - Get layout of PageFragment
+        View result = inflater.inflate(R.layout.fragment_page, container, false);
+
+        // 4 - Get widgets from layout and serialise it
+        LinearLayout rootView= (LinearLayout) result.findViewById(R.id.fragment_page_rootview);
+        TextView textView= (TextView) result.findViewById(R.id.fragment_page_title);
+
+        // 5 - Get data from Bundle (created in method newInstance)
+       int position = getArguments().getInt("pos", -1);
+       // int color = getArguments().getInt(KEY_COLOR, -1);
+
+        // 6 - Update widgets with it
+
+        textView.setText("x1= "+t.x1+" / x2="+t.x2);
+
+
+
+        return result;
+
+    }
+
+
+
+}
+
+-Le layout qu on va inflater:
+fragment_page.xml
+
+<LinearLayout
+    android:id="@+id/fragment_page_rootview"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/fragment_page_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dip"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="@color/Black"/>
+
+</LinearLayout>
+
+etape2:
+______________________________________________________
+le adapter:
+
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+
+public class PageAdapter extends FragmentPagerAdapter {
+
+    // 1 - Array of colors that will be passed to PageFragment
+    public static Item items[];
+
+    // 2 - Default Constructor
+    public PageAdapter(FragmentManager mgr, Item[] items) {
+        super(mgr);
+        this.items = items;
+    }
+
+    @Override
+    public int getCount() {
+        return(items.length); // 3 - Number of page to show
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+        // 4 - Page to return
+        return(pageFrag.newInstance(items[position]));
+    }
+}
+
+etape3:
+____________________________
+-configuration de ViewPager:
+
+        // 1 - Get ViewPager from layout
+        ViewPager pager = (ViewPager)findViewById(R.id.pager);
+        // 2 - Set Adapter PageAdapter and glue it together
+        Item items[]=new Item[5];
+        items[0]=new Item("1","1");
+        items[1]=new Item("2","2");
+        items[2]=new Item("3","3");
+        items[3]=new Item("4","4");
+        items[4]=new Item("5","5");
+        pager.setAdapter(new PageAdapter(getSupportFragmentManager(), items) {
+        });
+    }
+
+ 

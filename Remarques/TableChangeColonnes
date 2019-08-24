@@ -1,0 +1,79 @@
+Un Layout de table avec la possibilité de changer les colonne visible,sa fonctionne avec un recyclerview alors:
+
+-etape1:
+
+ajouter 2 arrayList dans l adapter:
+ public ArrayList<String> visible=new ArrayList<String>();
+ public ArrayList<String> inVisible=new ArrayList<String>();
+
+-etape 2:
+ajouter les methodes qui permet d afficher la colonne selon visible/invisible , et la 2eme dans le cas de changement 
+
+
+//changement de colonne , affiche une a la place de l autre .. 
+public void changeColonne(MenuItem item, int itemPos){
+         inVisible.set( inVisible.indexOf(item.getTitle()),visible.get(itemPos));
+         visible.set(itemPos,item.getTitle().toString());
+         notifyDataSetChanged();
+
+
+    }
+
+//cette methode est appliquable pour chaque colonne , testé quelle attribut "item" est visible dans "colone" et afficher le contenue de "position"
+    public void afficherColone(TextView colone,String item,int position){
+        switch (item){
+            case "code":{
+                colone.setText(items.get(position).code+"");
+                break;
+            }
+            case "qt":{
+                colone.setText(items.get(position).qt+"");
+                break;
+            }
+            case "prix":{
+                colone.setText(items.get(position).prix+"");
+                break;
+            }
+            case "remise":{
+                colone.setText(items.get(position).remise+"");
+                break;
+            }
+            case "nom":{
+                colone.setText(items.get(position).nom+"");
+                break;
+            }
+        }
+    }
+
+-etape 3:
+
+ajouter la methode qui afficher les colonne invisible et permet de changer la colonne , cette methode est dans l activity qui
+affiche la table:
+
+//itemPos est la pos de la colonne , itemTitre est le titre de l entete de colone .. 
+public void changerColonne(final int itemPos, final TextView itemTitre){
+        //Creating the instance of PopupMenu
+        PopupMenu popup = new PopupMenu(Accueil.this,itemTitre);//le button qui permet d ouvrir le Menu d invisible ..
+        
+//récupéré les les item invisibles ..
+        int i=0;
+        while(i != mAdapter.inVisible.size()){
+            popup.getMenu().add(mAdapter.inVisible.get(i));
+            i++;
+        }
+
+        //lors de choix d item on va changer les colonnes ..
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                //startactiv ..
+                itemTitre.setText(item.getTitle());
+                mAdapter.changeColonne(item,itemPos);
+                Toast.makeText(getApplicationContext(),"You Clicked : " + item.getTitle()+" number: ", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
+        popup.show();//showing popup menu
+    }
+
+

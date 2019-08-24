@@ -1,0 +1,145 @@
+==================== Methode 1 Using Library =================
+More info: https://github.com/umano/AndroidSlidingUpPanel
+
+1-Add Library to (gradle:app):
+
+compile 'com.sothree.slidinguppanel:library:3.3.1'
+
+2-Utilisation:
+
+dans le layout d activity copier coller ceci:
+(le root est compsé que 2 de fils container 1-body 2-slider)
+
+<?xml version="1.0" encoding="utf-8"?>
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sliding_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    app:umanoPanelHeight="10dp"
+    >
+
+    <!-- le container des element qui s affiche -->
+    <LinearLayout
+        android:id="@+id/body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/Orange"
+        android:gravity="center">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="The Awesome Sliding Up Panel"
+            android:textColor="@color/White"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+
+
+    <!-- le container de slide des element qui est masqué -->
+    <LinearLayout
+        android:id="@+id/slide"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/Green"
+        android:paddingTop="20dp"
+        android:orientation="vertical">
+
+
+    </LinearLayout>
+
+    <!--on peurt remplacer le container par un fichier xml séparé , 
+    on utilisant la balise include:
+     <include layout="@layout/bottom_sheet" /> -->
+
+    <include layout="@layout/bottom_sheet" />
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+-java methodes:
+
+slidingPanel=(SlidingUpPanelLayout)findViewById(R.id.sliderPan);
+slidingPanel.setShadowHeight(0);//pour le shadow ..
+slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);//ce state indique l ouverture de slide
+slidingPanel.getPanelState();//recuperation de state ouvert ou fermé ..
+slidingPanel.setParallaxOffset(200);//pour animate le div au desus au meme temp de slide
+//Callback de slider ou cas ou ouvrir ou fermer ..
+slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+    @Override
+    public void onPanelSlide(View panel, float slideOffset) {
+
+    }
+
+    @Override
+    public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+
+    }
+});
+
+================== Methode 2 ===========================
+See: CoordinatorLayout and BottomSheetBehavior
+(cette methode permet d ouvrir le panel sans background noir)
+
+-add Library:
+compile 'com.android.support:design:24.0.0'
+
+-utilisation:
+
+mettre dans le layout d'activity:
+
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:id="@+id/div_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <!-- ajouter un fichier xml qui contient le slide panel .. -->
+    <include layout="@layout/bottom_sheet" >
+
+    </include>
+
+</android.support.design.widget.CoordinatorLayout>
+
+-le layout de slider faut qu il soit comme ça:
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="50px"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+    <LinearLayout
+        android:id="@+id/div_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+
+</LinearLayout>
+
+================== Methode 3 ===========================
+
+Using BottomSheetFragment
+
+
+ 

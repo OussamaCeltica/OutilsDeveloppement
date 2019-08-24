@@ -1,0 +1,39 @@
+Pour Lancer l app comme RELEASE:
+
+va vers VARIANT-DEBUG et choisir: RELEASE
+
+then add this to Gradle:
+
+android {
+
+/*------------------------- this is what i will added -------------------*/
+    signingConfigs {
+        debug {
+            storeFile file('/home/celtica/Bureau/MOBIREKA/keyLsStock.jks')
+            keyPassword 'ouss0900'
+            storePassword 'ouss0900'
+            keyAlias = 'key0'
+        }
+    }
+/*------------------------- fin -------------------*/
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.leadersoft.celtica.lsstock"
+        minSdkVersion 14
+        targetSdkVersion 27
+        versionCode 13
+        versionName "1.6"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+/*--------------------- and add this ----------------------*/
+            debuggable true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+/*------------------- fin ---------------------------------*/
+        }
+    }
+}
+
+

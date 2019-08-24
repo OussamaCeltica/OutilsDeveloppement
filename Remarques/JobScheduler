@@ -1,0 +1,47 @@
+JobScheduler comme si un service:
+
+-Déclaraton dans manifest:
+<service
+            android:name=".tst2Serv"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+-Creation d une classe qui extends de JobService:
+oN REdéfinié ces de principaux methode onStart et onStp:
+
+@Override
+    public boolean onStartJob(JobParameters params) {
+
+         //le code d exec , de preference dans un thread si c est une tache lourd ..
+         jobFinished(params, false); //juste pour les tache lourd  pour indiquer que le job est terminé puis relancé 
+
+        return true; //true si c est une tache long nécéssite le relancement , false tache petite ..
+    }
+
+-Lancement de service
+
+                    tst2Serv.isRun=true;
+                    ComponentName componentName = new ComponentName(Accueil.this, tst2Serv.class);
+                    JobInfo info;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+                        info= new JobInfo.Builder(123, componentName)
+                                .setPersisted(true)
+                                .setMinimumLatency(1000)
+                                .build();
+
+
+                    } else {
+                        info= new JobInfo.Builder(123, componentName)
+                                .setPersisted(true)
+                                .setPeriodic(1000)
+                                //.setRequiresCharging(true) elle nécéssite que le device est branché sous charge ..
+                                //.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)  elle nécéssite une conexion internet ..
+                                .build();
+                    }
+
+                    JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+                    int resultCode = scheduler.schedule(info);
+
+
+               

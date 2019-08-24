@@ -1,0 +1,22 @@
+replaceAll:
+
+remplacé les point et tt apres le point:
+str=xpath.replaceAll("\\.", "/*/");  
+
+
+- Convertion d un double a un string sans notation scientifique:
+
+String.format("%.3f",MyDouble); // 3f veut dire 3 nbr apres virgule ..
+
+________________________
+
+ double x=1256633248;
+       
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb, Locale.US);
+        formatter.format("%,.2f", x);
+        Log.e("ddd",sb.toString().replaceAll(","," ").replaceFirst(" ",""));
+
+//1 256 633 248.00
+
+

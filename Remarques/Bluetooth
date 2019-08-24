@@ -1,0 +1,52 @@
+https://www.youtube.com/watch?v=dzdItpEb5zM
+
+Permission required:
+<uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+________________________________________
+
+
+1-Test si le device support BT:
+
+BluetoothAdapter ba=BluetoothAdapter.getDefaultAdapter();
+        if (ba == null){
+            Toast.makeText(getApplicationContext(),"Not supp",Toast.LENGTH_LONG);
+        }
+
+_____________________________
+
+2-Start BT:
+ Intent i=new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(i,BT_ENABLE);
+
+__________________________________________
+
+-Stop BT:
+ba.disable();
+
+___________________________________
+
+3-Dicovred BT: c a d trouver les device entouré ..
+
+if(!ba.isDiscovring()){
+  Intent i2=new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+
+        startActivityForResult(i,BT_DISC); // BT _DISC c est un code qlconque pour actREsult ..
+/*
+discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300); // dicover pour 5 minutes ..
+startActivity(discoverableIntent);
+*/
+
+
+}
+
+__________________________________
+
+-get Connected Devices:
+
+ Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+for (BluetoothDevice device : pairedDevices) {
+             //device.getName();
+        }
+

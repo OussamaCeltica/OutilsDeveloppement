@@ -1,0 +1,93 @@
+-creation d un projet firebase et le connecter dans le projet puis:
+
+-dans manifest:
+avant fermeture tag app
+ <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="ocr" />
+        <!-- To use multiple models: android:value="ocr,model2,model3" -->
+
+-dans gradell.app:
+dependencies {
+   //...
+    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.google.firebase:firebase-ml-vision:18.0.1'
+    implementation 'com.google.firebase:firebase-ml-vision-image-label-model:17.0.2'
+    implementation 'com.google.firebase:firebase-ml-vision-face-model:17.0.2'
+    implementation 'com.google.firebase:firebase-ml-model-interpreter:16.2.3'
+    //....
+
+
+}
+apply plugin: 'com.google.gms.google-services'
+
+-dans pr.gradel:
+dependencies {
+       //...
+        classpath 'com.google.gms:google-services:4.2.0' // google-services plugin
+        
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+
+
+______________________________________________________________
+implémenté:
+
+-Récupéré une bitmap et faire:
+FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
+
+            FirebaseVisionTextRecognizer detector = FirebaseVision.getInstance()
+                    .getOnDeviceTextRecognizer();
+
+
+            Task<FirebaseVisionText> result =
+                    detector.processImage(image)
+                            .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                                @Override
+                                public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                                    // Task completed successfully
+                                    // ...
+
+                                    String resultText = firebaseVisionText.getText();
+
+                                    for (FirebaseVisionText.TextBlock block : firebaseVisionText.getTextBlocks()) {
+
+                                        txtView.setText(txtView.getText().toString()+block.getText());
+                                        String blockText = block.getText();
+                                        Float blockConfidence = block.getConfidence();
+                                        List<RecognizedLanguage> blockLanguages = block.getRecognizedLanguages();
+                                        Point[] blockCornerPoints = block.getCornerPoints();
+                                        Rect blockFrame = block.getBoundingBox();
+                                        for (FirebaseVisionText.Line line : block.getLines()) {
+                                            String lineText = line.getText();
+
+                                            Float lineConfidence = line.getConfidence();
+                                            List<RecognizedLanguage> lineLanguages = line.getRecognizedLanguages();
+                                            Point[] lineCornerPoints = line.getCornerPoints();
+                                            Rect lineFrame = line.getBoundingBox();
+                                            for (FirebaseVisionText.Element element : line.getElements()) {
+                                                Log.e("ttt", "txt: " + element.getText());
+                                                String elementText = element.getText();
+                                                Float elementConfidence = element.getConfidence();
+                                                List<RecognizedLanguage> elementLanguages = element.getRecognizedLanguages();
+                                                Point[] elementCornerPoints = element.getCornerPoints();
+                                                Rect elementFrame = element.getBoundingBox();
+                                            }
+                                        }
+                                    }
+                                }
+                            })
+                            .addOnFailureListener(
+                                    new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Task failed with an exception
+                                            // ...
+                                            e.printStackTrace();
+                                        }
+                                    });
+
+        }
+

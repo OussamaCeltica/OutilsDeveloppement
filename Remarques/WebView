@@ -1,0 +1,34 @@
+WebView:
+
+
+        WebView wv;
+        wv = (WebView) findViewById(R.id.webv);
+        wv.loadUrl("file:///android_asset/index.html");
+        wv.setWebChromeClient(new WebChromeClient());
+        WebSettings webSettings = wv.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+
+        wv.addJavascriptInterface(new JsTst(this),"Android");
+
+
+___________________________________________
+
+-Pour Ajouter Des Fonctionalité mobile a JS:
+
+public class JsTst {
+    AppCompatActivity mContext;
+
+    /** Instantiate the interface and set the context */
+    JsTst(AppCompatActivity c) {
+        mContext = c;
+    }
+
+    /** Show a toast from the web page */
+    @JavascriptInterface
+    public void showToast(String toast) {
+        Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        mContext.startActivityForResult(takePictureIntent, 30);
+    }
+}
+

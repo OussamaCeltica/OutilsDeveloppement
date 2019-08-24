@@ -1,0 +1,154 @@
+-Intent pour faire un appel:
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+// executer l appel de code ..
+  Intent i=new Intent();
+ i.setAction(Intent.ACTION_CALL);
+
+  i.setData(Uri.parse("tel:*200#"));
+
+
+ if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
+ Toast.makeText(getApplicationContext(),"Autoriser l appel svp",Toast.LENGTH_LONG).show();
+    ActivityCompat.requestPermissions(me,new String[]{Manifest.permission.CALL_PHONE},1);
+ }else {
+  startActivity(i);
+ }
+
+_____________________________________________
+
+1. Write a class named "USSDQervice"
+
+ 
+
+import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.AccessibilityServiceInfo;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
+
+import java.util.Collections;
+import java.util.List;
+
+public class USSDService extends AccessibilityService {
+
+    public static String TAG = USSDService.class.getSimpleName();
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public void onAccessibilityEvent(AccessibilityEvent event) {
+        Log.d(TAG, "onAccessibilityEvent");
+
+        AccessibilityNodeInfo source = event.getSource();
+    /* if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED && !event.getClassName().equals("android.app.AlertDialog")) { // android.app.AlertDialog is the standard but not for all phones  */
+        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED && !String.valueOf(event.getClassName()).contains("AlertDialog")) {
+            return;
+        }
+        if(event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED && (source == null || !source.getClassName().equals("android.widget.TextView"))) {
+            return;
+        }
+        if(event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED && TextUtils.isEmpty(source.getText())) {
+            return;
+        }
+
+        List<CharSequence> eventText;
+
+        if(event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            eventText = event.getText();
+        } else {
+            eventText = Collections.singletonList(source.getText());
+        }
+
+        String text = processUSSDText(eventText);
+
+        if( TextUtils.isEmpty(text) ) return;
+
+        // Close dialog
+        //performGlobalAction(GLOBAL_ACTION_BACK); // This works on 4.1+ only
+
+        Log.e(TAG, text);
+        // Handle USSD response here
+
+    }
+
+    private String processUSSDText(List<CharSequence> eventText) {
+        for (CharSequence s : eventText) {
+            String text = String.valueOf(s);
+            // Return text if text is the expected ussd response
+            if( true ) {
+                return text;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void onInterrupt() {
+    }
+
+    @Override
+    protected void onServiceConnected() {
+        super.onServiceConnected();
+        Log.e(TAG, "onServiceConnected");
+        AccessibilityServiceInfo info = new AccessibilityServiceInfo();
+        info.flags = AccessibilityServiceInfo.DEFAULT;
+        info.packageNames = new String[]{"com.android.phone"};
+        info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED | AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED;
+        info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
+        setServiceInfo(info);
+    }
+}
+-------------------------------------------------
+
+
+2. Add an entry for the above service in the manifest
+
+ <service android:name=".USSDService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+        <intent-filter>
+            <action android:name="android.accessibilityservice.AccessibilityService" />
+        </intent-filter>
+        <meta-data android:name="android.accessibilityservice"
+            android:resource="@xml/ussd_service" /> // il faut créé ce fichier ..
+
+        </service>
+
+_____________________________________________
+
+
+3. Create a folder 'xml' under res, and then create file named "config_service.xml" in xml folder.
+
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeAllMask"
+    android:accessibilityFeedbackType="feedbackSpoken"
+    android:accessibilityFlags="flagDefault"
+    android:canRetrieveWindowContent="true"
+    android:description="This service records pop ups sent by your mobile operator, and saves them in USSD App. It is absolutely safe to use." //declare this in string.xml
+    android:notificationTimeout="100"
+    android:packageNames="MyAppPackageName"
+    android:settingsActivity="com.example.android.accessibility.ServiceSettingsActivity" />
+
+To run a accessibility service, user permissions are needed. The above xml is used to provide the necessary description to the user .
+
+______________________________________________
+
+
+4. Now in your activity, invoke this
+
+    startService(new Intent(this, XXXX.class));
+    dailNumber("*111*2");
+
+
+______________________________________________
+
+5. Launch your application.
+
+
+6. After the launch, change the settings manually
+
+Setting->Accessibility Setting -> You can see a option 'your app name'. Turn it on. (This has to be done from as a part of application flow(not manual))
+
+
+7. Restart your application, and check the logs, that I wrote in Service class

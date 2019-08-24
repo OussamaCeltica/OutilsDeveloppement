@@ -1,0 +1,23 @@
+openMenu_butt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //Creating the instance of PopupMenu
+                        PopupMenu popup = new PopupMenu(AfficherVentes.this,openMenu_butt);
+                        //Inflating the Popup using xml file
+                        popup.getMenuInflater().inflate(R.menu.menu_archive, popup.getMenu());//menu archive est fichier XML de type menu ..
+// OR
+ popup.getMenu().add("Quantité");
+                
+
+                        //registering popup with OnMenuItemClickListener
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            public boolean onMenuItemClick(MenuItem item) {
+                                //startactiv ..
+                                Toast.makeText(getApplicationContext(),"You Clicked : " + item.getItemId()+""+ item.getTitle(), Toast.LENGTH_SHORT).show();
+                                return true;
+                            }
+                        });
+
+                        popup.show();//showing popup menu
+                    }
+                });

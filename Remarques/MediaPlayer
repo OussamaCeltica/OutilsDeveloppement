@@ -1,0 +1,48 @@
+-Play audio from server:
+
+progress = new ProgressDialog(Accueil.this); // activité non context ..
+
+        progress.setTitle("Uploading");
+        progress.setMessage("Please wait...");
+        progress.show();
+        
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                mp.reset();
+                return false;
+            }
+        });
+
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            public void onPrepared(MediaPlayer mp) {
+                progress.dismiss();
+                Log.e("ttt","GOOOOD");
+                mp.start();
+            }
+        });
+
+        try {
+            Uri uri = Uri.parse("https://www.android-examples.com/wp-content/uploads/2016/04/Thunder-rumble.mp3");
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setDataSource(this, uri);
+            mediaPlayer.prepare();
+
+        } catch (IllegalArgumentException e) {
+        } catch (IllegalStateException e) {
+        } catch (IOException e) {
+        }
+__________________________________________________________
+
+-Play from assets:
+
+
+        MediaPlayer player = new MediaPlayer();
+        try {
+            AssetFileDescriptor afd = getAssets().openFd("barcode_succ.wav");
+            player.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+            player.prepare();
+            player.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }

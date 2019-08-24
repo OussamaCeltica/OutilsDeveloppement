@@ -1,0 +1,82 @@
+
+-Fermer le clavier:
+
+  InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+    //Find the currently focused view, so we can grab the correct window token from it.
+    View view = getCurrentFocus();
+    //If no view currently has focus, create a new one, just so we can grab a window token from it
+    if (view == null) {
+        view = new View(activity);
+    }
+    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+OR: someEditText.onEditorAction(EditorInfo.IME_ACTION_DONE) //pour un editext de la meme classe ;
+
+-ouvrir:
+InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+________________________________________________________
+-Détécter l ouvrage et la fermeture de clavier:
+Au debut faire:
+boolean visible=true;
+    int test1=0;
+    int min;
+
+final FrameLayout body=((FrameLayout)findViewById(R.id.body_reg));//le view root de layout ..
+
+        body.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect measureRect = new Rect(); //you should cache this, onGlobalLayout can get called often
+                body.getWindowVisibleDisplayFrame(measureRect);
+                // measureRect.bottom is the position above soft keypad
+                int keypadHeight = body.getRootView().getHeight() - measureRect.bottom;
+
+                Log.e("Width Keybo",""+keypadHeight);
+                if(test1==0){
+                    test1=1;
+                    min=keypadHeight;
+                }
+
+                if (keypadHeight > min) {
+                    // keyboard is opened
+ 
+                } else {
+                    //Keyboard is close ..
+ 
+                }
+            }
+        });
+
+________________________________
+-Edittext pour plusieurs scan au mm temps:
+
+tt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence d, int i, int i1, int i2) {
+
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+                if(!dejaScan){
+                    dejaScan=true;
+                    Log.e("ttt ",s.toString());
+                    tt.setText("");
+                }else {
+                  dejaScan=false;
+                }
+                dejaScan=false;
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+

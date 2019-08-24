@@ -1,0 +1,43 @@
+-Write into a file:
+
+
+        try {
+            FileOutputStream fos=this.openFileOutput("sync.txt", Context.MODE_PRIVATE);
+            String s="{name:'ouss',job:'developper'}";
+            byte b[]=s.getBytes();
+            fos.write(b);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+__________________________________
+-Read from a file:
+
+        FileInputStream fis;
+        int n=0;
+        try {
+            fis = openFileInput("sync.txt");
+            StringBuffer fileContent = new StringBuffer("");
+
+            byte[] buffer = new byte[1024];
+
+            while ((n = fis.read(buffer)) != -1)
+            {
+                fileContent.append(new String(buffer, 0, n));
+            }
+            fis.close();
+            String s=fileContent.toString();
+            ussd.setText(s);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+____________________________________________
+-Stockage d un fichier dans un dossier specifique d une application:
+MainActivity.getExternalFilesDir(null)+"Nomfich.ext" == c est le path que je dois donnée dans l enregistrement ..
+

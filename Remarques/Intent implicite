@@ -1,0 +1,44 @@
+-Intent pour faire un appel:
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+// executer l appel de code ..
+  Intent i=new Intent();
+ i.setAction(Intent.ACTION_CALL);
+
+  i.setData(Uri.parse("tel:*200#"));
+
+
+ if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
+ Toast.makeText(getApplicationContext(),"Autoriser l appel svp",Toast.LENGTH_LONG).show();
+    ActivityCompat.requestPermissions(me,new String[]{Manifest.permission.CALL_PHONE},1);
+ }else {
+  startActivity(i);
+ }
+
+___________________________________
+
+-Intent pour Ouvrir l accessibilité service:
+ Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                   startActivity(intent);
+
+______________________________
+-Pour l activation de bluetooh:
+-Start BT:
+ Intent i=new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(i,BT_ENABLE);
+
+_______________________________
+-Selectionner une image:
+Intent i2=new Intent();
+        i2.setType("image/*");
+        i2.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(i2,2);
+
+___________________________________
+pdf:
+
+Intent i2=new Intent();
+        i2.setType("application/pdf");
+        i2.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(i2,2);
+
+

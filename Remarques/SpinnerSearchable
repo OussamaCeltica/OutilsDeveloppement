@@ -1,0 +1,101 @@
+https://github.com/MdFarhanRaja/SearchableSpinner
+
+-instalation:
+allprojects {
+	repositories {
+		maven { url 'https://jitpack.io' }
+	}
+}
+
+dans Module == 
+dependencies {
+        compile 'com.github.MdFarhanRaja:SearchableSpinner:1.9'
+}
+
+-SpinnerSearchable:
+
+dans OnCreate:
+
+//items c est un arrayList des string ..
+  spinnerDialog=new SpinnerDialog(MainActivity.this,items,"Select or Search City","Close Button Text");// With No Animation
+spinnerDialog=new SpinnerDialog(MainActivity.this,items,"Select or Search City",R.style.DialogAnimations_SmileWindow,"Close Button Text");// With 	Animation
+
+
+    spinnerDialog.bindOnSpinerListener(new OnSpinerItemClick() {
+        @Override
+        public void onClick(String item, int position) {
+            //Toast.makeText(MainActivity.this, item + "  " + position+"", Toast.LENGTH_SHORT).show();
+            selectedItems.setText(item + " Position: " + position);//selectedItems c le textView ou je met ma selection ..
+
+        }
+    });
+    findViewById(R.id.show).setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            spinnerDialog.showSpinerDialog();
+        }
+    });
+
+_______________________________
+Simple Spinner:
+
+
+Dans onCreat():
+//remplissage de spinner avec les wilaya
+        final Spinner wilaya=(Spinner)findViewById(R.id.wilaya);
+        wilaya.setPrompt("select wilaya");
+        String[] wil ={"Adrar","Chlef"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
+                android.R.layout.simple_spinner_item, wil);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        wilaya.setAdapter(adapter);
+
+        wilaya.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int y, long l) {
+                  //lors de changement de selection ..
+                  ((TextView)MySpinner.getSelectedView()).setTextColor(getResources().getColor(R.color.AppColor)); // set text color of selected item ..
+
+                  MySpinner.getSelectedItem().toString());
+       
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+____________________________________
+MySpinnerSearchable == est spinnerSearchable avec 2 valeur pour (nom client et code client):
+
+ MySpinnerSearchable spinn;
+
+dans OnCReate():
+
+ArrayList<SpinnerItem> SpinnerItems= new ArrayList<SpinnerItem>();
+         
+         spinn=new MySpinnerSearchable(this,SpinnerItems ,"Hint de Search", new MySpinnerSearchable.SpinnerConfig() {
+            @Override
+            public void onChooseItem(int pos, SpinnerItem item) {
+//pos not fonctional yet ..
+                ussd.setText(item.value);
+                spinn.closeSpinner();
+
+            }
+        });
+
+
+        body.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                spinn.openSpinner();
+            }
+        });
+
+
+
+
+                        
+                          
+  

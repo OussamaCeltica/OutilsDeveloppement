@@ -1,0 +1,179 @@
+https://developer.android.com/google/play/licensing/setting-up#download-lvl
+
+https://stackoverflow.com/questions/18324963/how-can-i-implement-google-play-licensing-for-an-android-app
+
+
+-Télécharger le dossier du licence si il n'existe pas , avec:
+
+git clone https://github.com/google/play-licensing
+
+-importer le dossier play-licensing au projet actuel:
+ File > New > Import Module.
+puis selectionner la source: choisir le dossier (dans licencing-play) qui contient  AndroidManifest.xml et valider
+
+-implementation:
+private static final byte[] SALT = new byte[] {
+            -46, 65, 30, -128, -103, -57, 74, -64, 51, 88, -95,
+            -45, 77, -117, -36, -113, -11, 32, -64, 89
+    };
+
+//la clé on récupère d apres google console ..
+    private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwtYO+jmOYRqjYGHYc+z77M1FTxDhIgi0ANzsPtJDK28I6jsUwJATrwbMEuvUuItDef8F8XeXUCfFHTLSY+Tjhd1ws6fuLGa9pGhXMgr5/g8MBGLV1B8WNv9Tf3SqMSGuvFC93Tqw20dTyVmH5J+maO8ZJ7LS/siFTycEvQPzQTJFZ0RYbjos5uzRXKQkqr8lRjFSrMsrgJXLDykDvB127gD3vbFXu8zzwa8uUB6s9IFN1hsfGek2ernNmbQK3bLONs7d4F806Fe9mjPUae6l5KY8G2+t8V9Bf22zpuT+KeQDL8LSDnNy94GelM2yl5KQ2GuNcs9jJg3HMv7UsyRIMQIDAQAB";
+    
+private Handler mHandler;
+    private LicenseChecker mChecker;
+    private LicenseCheckerCallback mLicenseCheckerCallback;
+    boolean licensed;
+    boolean checkingLicense;
+    boolean didCheck;
+
+-dans onCReate():
+
+String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+       // Log.i("Device Id", deviceId);  //AN EXAMPLE OF LOGGING THAT YOU SHOULD BE DOING :)
+
+        mHandler = new Handler();
+        mLicenseCheckerCallback = new MyLicenseCheckerCallback();
+        mChecker = new LicenseChecker(this, new ServerManagedPolicy(this, new   AESObfuscator(SALT, getPackageName(), deviceId)), BASE64_PUBLIC_KEY);
+
+        doCheck();
+
+-les methodes:
+
+private void doCheck() {
+
+        didCheck = false;
+        checkingLicense = true;
+        setProgressBarIndeterminateVisibility(true);
+
+        mChecker.checkAccess(mLicenseCheckerCallback);
+    }
+
+
+    private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
+
+        @Override
+        public void allow(int reason) {
+            // TODO Auto-generated method stub
+            if (isFinishing()) {
+                // Don't update UI if Activity is finishing.
+                return;
+            }
+            Log.e("License","Accepted!");
+
+            //You can do other things here, like saving the licensed status to a
+            //SharedPreference so the app only has to check the license once.
+
+            licensed = true;
+            checkingLicense = false;
+            didCheck = true;
+
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public void dontAllow(int reason) {
+            // TODO Auto-generated method stub
+            if (isFinishing()) {
+                // Don't update UI if Activity is finishing.
+                return;
+            }
+            Log.e("License","Denied!");
+            Log.e("License","Reason for denial: "+reason);
+
+            //You can do other things here, like saving the licensed status to a
+            //SharedPreference so the app only has to check the license once.
+
+            licensed = false;
+            checkingLicense = false;
+            didCheck = true;
+
+            showDialog(0);
+
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public void applicationError(int reason) {
+            // TODO Auto-generated method stub
+            Log.e("License", "Error: " + reason);
+            if (isFinishing()) {
+                // Don't update UI if Activity is finishing.
+                return;
+            }
+            licensed = true;
+            checkingLicense = false;
+            didCheck = false;
+
+            showDialog(0);
+        }
+
+
+    }
+
+    protected Dialog onCreateDialog(int id) {
+        // We have only one dialog.
+        return new AlertDialog.Builder(this)
+                .setTitle("Application NOT Licensed ..")
+                .setMessage("This application is not licensed, please buy it from the play store.")
+                .setPositiveButton("Buy", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                "http://market.android.com/details?id=" + getPackageName()));
+                        startActivity(marketIntent);
+                        finish();
+                    }
+                })
+                .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNeutralButton("Re-Check", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        doCheck();
+                    }
+                })
+
+                .setCancelable(false)
+                .setOnKeyListener(new DialogInterface.OnKeyListener(){
+                    public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
+                        Log.e("License", "Key Listener");
+                        finish();
+                        return true;
+                    }
+                })
+                .create();
+
+    }
+
+
+_______________________________
+
+-My Licence:
+
+  //region Check Licence
+            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(getApplicationContext().TELEPHONY_SERVICE);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+
+
+            }
+            String id=telephonyManager.getDeviceId();
+            if(id==null){
+                Toast.makeText(getApplicationContext(),"La License est expiré ..",Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            Log.e("idd",id+" ");
+            double d=1;
+
+            Cursor r6=bd.read("SELECT julianday('2019-07-03') - julianday('now') as date FROM admin");
+            while (r6.moveToNext()){
+                Log.e("ccc",""+r6.getString(r6.getColumnIndex("date")));
+                d=Double.parseDouble(r6.getString(r6.getColumnIndex("date")));
+            }
+
+            if(!id.equals("867152024719388") || d < 0 ){
+                Toast.makeText(getApplicationContext(),"La License est expiré ..",Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            //endregion

@@ -1,0 +1,47 @@
+-Au debut il faut qu on créé une classe qui hérite de BroadcastReceiver et on implement les méthodes
+
+-on déclare dans le manifest le receiver dans le tag application , si le contenu de tag receiver est vide alors il est pour tt type des action
+ comme changement wifi ou l entré d une appel ou mesg .. etc si non vide on specifier le type comme suit :
+ 
+<receiver android:name=".NomDeBroadcastClass" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                 
+            </intent-filter>
+        </receiver>
+
+
+______________________________
+
+Pour Les Version +7:
+
+Video: https://www.youtube.com/watch?v=11Oe40o8RJo
+
+-Supprimer la declaration de receiver from manifest apres
+faire:
+
+WifiBroadcast wb=new WifiBroadcast();
+        IntentFilter filter=new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION); // le filtrage de type d evenement souhaitté a recevé
+        registerReceiver(wb,filter); // enregstré le broadcast est mis en oeuvre ..
+
+-Dans la Class WifiBroadcast:
+
+@Override
+    public void onReceive(Context context, Intent intent) {
+
+        if(intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)){
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+            if(netInfo != null && netInfo.isConnected()){
+                Log.e("Test Internet","Kayen");
+                Toast.makeText(context,"Kayen INternet ..",Toast.LENGTH_LONG).show();
+                context.startService(new Intent(context,NewNotification.class));
+
+            }else {
+                Log.e("Test Internet","Makach ..");
+                Toast.makeText(context,"Makach  ..",Toast.LENGTH_LONG).show();
+                context.stopService(new Intent(context,NewNotification.class));
+            }
+        }
+}

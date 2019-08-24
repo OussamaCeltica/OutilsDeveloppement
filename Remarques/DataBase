@@ -1,0 +1,58 @@
+-Connect to SQL SERVER:
+video: https://www.youtube.com/watch?v=j9EFbeKn1qk
+jtds: http://www.java2s.com/Code/Jar/j/Downloadjtds125jar.htm
+
+-Dans Dependency:
+implementation files('libs/jtds-1.2.5.jar');
+
+-Dans gradel:project, dans all project, ajouter ==  maven { url 'https://jitpack.io' }
+
+il faut utiliser la Class MyBDJava et la donné:
+type: "net.sourceforge.jtds.jdbc.Driver"
+URL: "jdbc:jtds:sqlserver://" + ip +":"+port+";"+ "databaseName=" + db + ";user=" + un + ";password="+ password + ";"
+
+-pour que l UI ne bloque pas connecter dans AsyncTask;
+
+-il faut ajouter la permission d internet:<uses-permission android:name="android.permission.INTERNET" />
+
+-il faut toujours penser d utiliser dans doAfter() un Thread pour eviter le networkThreadException
+
+## Syntaxe:
+-Limit 2 en SQL == select top 2
+
+_____________________________________________________
+Sqlite:
+
+##Sqlite date functions:
+-selectionner la date via une format précise:
+strftime('%d-%m-%Y %H:%M', `NomDeChamp`) ==
+d=days
+m=mois
+Y=years
+H=hours
+M=Minutes
+
+
+
+- Différence 2 dates: // le resultat sera en day
+SELECT julianday('now') - julianday(DateCreated) FROM Payment;
+SELECT julianday('2019-06-03') - julianday('2019-01-03') as date FROM admin
+
+-Convertir une date a un nombre de jour compatible au sql server:
+SELECT cast(-strftime('%s','1900-01-01') + strftime('%s',strftime('%Y-%m-%d %H:%M:00',date_transfert)) as double) / (3600 * 24) as date_f
+dans SQLSERVEUR: CAST(date_deb as datetime )
+
+-récupéré la date actuel via sqlite:
+select strftime('%Y-%m-%d %H:%M','now','localtime') as now_date
+julianday('now','localtime') //la date actuel en hours
+
+-Insert Or Replace: // permet d inséré si il n existe pas et MAJ si il existe ..
+replace into table (col) values('val')
+
+
+
+______________________________________
+SQL SERVER:
+
+Online Compiler:
+https://rextester.com/l/sql_server_online_compiler

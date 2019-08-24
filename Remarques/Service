@@ -1,0 +1,32 @@
+
+
+for android upper than 8.0 (Oreo):
+seeeeeeeeeeeeeee JOb Scheduler ...
+
+-AlarmManager
+
+
+
+
+
+
+___________________________________________________
+/*------------ THis is bad for Android upper than 8 -----------*/
+1- Creation d une classe qui Hérite de service et la déclaré dans le manifest dans la balise application:
+
+<service android:enbled="true" android:name=".NomDeClasse" /<
+
+2- Redéfénir la methode onStartCommand:
+cette méthode doit contenir le code que je veut éxécuter en arrière plan ..
+onStartCommand() s exécute lors l appel de startService() dans Mon Activité ..
+
+##les méthodes:
+
+- onDestroy():
+le code a éxécuter lors service est terminé
+
+______________
+Execution:
+Dans une activité:
+
+startService(new Intent(MainActivity.this,CheckAppsRun.class));

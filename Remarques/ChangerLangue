@@ -1,0 +1,9 @@
+//appeler cette méthode avant super.onCreat() d activity ..
+
+ public static void changeLang(AppCompatActivity context, String lang) {
+        Locale myLocale = new Locale(lang);
+        Locale.setDefault(myLocale);
+        android.content.res.Configuration config = new android.content.res.Configuration();
+        config.locale = myLocale;
+        context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+    }

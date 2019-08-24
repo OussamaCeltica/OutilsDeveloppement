@@ -1,0 +1,8 @@
+ ussd.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+                v.startDrag(ClipData.newPlainText("",""),new View.DragShadowBuilder(v),v,0);
+                return false;
+            }
+        });

@@ -1,0 +1,71 @@
+-L utilisation de alarmManger dans le cas ou vous voulez exécuter un code dans un temps précis , ou répéter une exécution dans chaque periode précise ... etc (voir documentation)
+
+-Pour Répéter un job dans une periode précise (upper than 1 minute):
+il faut crré une class qui hérité de BroadcastReceiver et dans onREceive faire le job a répéter (N Oublier pas de déclarer dans Manifest)
+
+
+AlarmManager alarmMgr;
+    PendingIntent alarmIntent;
+
+ alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
+            Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+            alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 111, intent, 0);
+
+
+            alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    AlarmManager.ELAPSED_REALTIME + 1000(Temp départ),
+                    AlarmManager.ELAPSED_REALTIME(Temp répéter), alarmIntent);
+
+
+___________________________________________________________
+Pour une exécution less than 1 minute:
+
+dans le REceiver:
+public class AlarmReceiver extends BroadcastReceiver {
+    public static boolean isRunning=false;
+    Thread t;
+    @Override
+    public void onReceive(final Context context, Intent intent) {
+ 
+        if(!isRunning) {
+            isRunning=true;
+            if (t != null) {
+                t.stop();
+            }
+            t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        Log.e("ttt", "OK");
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            t.start();
+        }
+ 
+    }
+ 
+}
+
+
+dans le launcher:
+
+if(!AlarmReceiver.isRunning) {
+            Log.e("ttt"," Ni Nedhol ..");
+            alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
+            Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+            alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 111, intent, 0);
+
+
+            alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    AlarmManager.ELAPSED_REALTIME + 1000,
+                    AlarmManager.ELAPSED_REALTIME, alarmIntent);
+
+        }
+
+
