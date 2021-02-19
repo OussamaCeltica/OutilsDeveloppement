@@ -1,43 +1,42 @@
--Write into a file:
+-Write into a file: (INTERNAL-STORAGE ==== Ces Fichiers son utilisé juste pour mon appli d autres app ne l accde pas , et les fichiers seront supprimer quan l app désinstaller)
 
 
         try {
-            FileOutputStream fos=this.openFileOutput("sync.txt", Context.MODE_PRIVATE);
-            String s="{name:'ouss',job:'developper'}";
-            byte b[]=s.getBytes();
-            fos.write(b);
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(openFileOutput("tt.txt", Context.MODE_APPEND)));
+                writer.write("#EXTM3U \n #EXTINF:10.080000 ,Bein Sports HD 1 \n");
+                writer.write(chaines.get(i));
+                writer.flush();
+                writer.close();
+}catch(){}
 
 __________________________________
 -Read from a file:
 
-        FileInputStream fis;
-        int n=0;
-        try {
-            fis = openFileInput("sync.txt");
-            StringBuffer fileContent = new StringBuffer("");
-
-            byte[] buffer = new byte[1024];
-
-            while ((n = fis.read(buffer)) != -1)
-            {
-                fileContent.append(new String(buffer, 0, n));
-            }
-            fis.close();
-            String s=fileContent.toString();
-            ussd.setText(s);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        BufferedReader reader=new BufferedReader(new InputStreamReader(openFileInput("tt.txt"))));
+                reader.lines().forEach((s)->{
+                    System.out.println(s+"");
+                });
 
 ____________________________________________
+---------------------------------------------- READ/WRITE EXTERNAL STORAGE----------------------------------
 -Stockage d un fichier dans un dossier specifique d une application:
-MainActivity.getExternalFilesDir(null)+"Nomfich.ext" == c est le path que je dois donnée dans l enregistrement ..
+PS: si vous voulez Géré des Media comme photos et tt comme facebook et viber alors voir MediaStoreAPI
 
+try {
+
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(new FileOutputStream(new File(MainActivity.this.getExternalFilesDir(null)+"/celtica.m3u"))));
+                writer.write("#EXTM3U \n #EXTINF:10.080000 ,Bein Sports HD 1 \n");
+                //writer.write(chaines.get(i));
+                writer.flush();
+                writer.close();
+
+                BufferedReader reader=new BufferedReader(new InputStreamReader(new FileInputStream(new File(MainActivity.this.getExternalFilesDir(null).getAbsolutePath()+"/celtica.txt"))));
+                reader.lines().forEach((s)->{
+                    System.out.println(s+"");
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }

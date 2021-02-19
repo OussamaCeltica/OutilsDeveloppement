@@ -1,0 +1,226 @@
+-Sinch pour une appel vocal:
+1-creation de projet dans le site de sinch
+2- téléchargement et l ajout de sdk pour le projet android 
+3- ajouter les permision dans manifest
+4- configuerer l appel comme suit:
+
+//pour joindre de personne il faut un identifiant pour les deux: sinchClient.userId("StringIdQlconque") et  sinchClient.getCallClient().callUser("recipientId");
+
+//ces configuration on le trouve dans le projet dans snich
+private static final String APP_KEY = "6dbf737f-7e21-4d50-ab13-13baf5533738";
+    private static final String APP_SECRET = "szhVqF9hJE2grBwFTmMJvA==";
+    private static final String ENVIRONMENT = "clientapi.sinch.com";
+
+ @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_call2);
+
+        Intent intent = getIntent();
+        callerId = intent.getStringExtra("callerId");
+        recipientId = intent.getStringExtra("recipientId");
+
+        sinchClient = Sinch.getSinchClientBuilder()
+                .context(this)
+                .userId(callerId)
+                .applicationKey(APP_KEY)
+                .applicationSecret(APP_SECRET)
+                .environmentHost(ENVIRONMENT)
+                .build();
+
+        sinchClient.setSupportCalling(true);
+        sinchClient.startListeningOnActiveConnection();
+        sinchClient.start();
+
+        sinchClient.getCallClient().addCallClientListener(new SinchCallClientListener());
+
+        button = (Button) findViewById(R.id.button);
+        callState = (TextView) findViewById(R.id.callState);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (call == null) {
+                    call = sinchClient.getCallClient().callUser(recipientId);
+                    call.addCallListener(new SinchCallListener());
+                    button.setText("Hang Up");
+                } else {
+                    call.hangup();
+                }
+            }
+        });
+    }
+
+    private class SinchCallListener implements CallListener {
+        @Override
+        public void onCallEnded(Call endedCall) {
+            call = null;
+            SinchError a = endedCall.getDetails().getError();
+            button.setText("Call");
+            callState.setText("");
+            setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+        }
+
+        @Override
+        public void onCallEstablished(Call establishedCall) {
+            callState.setText("connected");
+            setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+        }
+
+        @Override
+        public void onCallProgressing(Call progressingCall) {
+            callState.setText("ringing");
+        }
+
+        @Override
+        public void onShouldSendPushNotification(Call call, List<PushPair> pushPairs) {
+        }
+    }
+
+    private class SinchCallClientListener implements CallClientListener {
+        @Override
+        public void onIncomingCall(CallClient callClient, Call incomingCall) {
+            call = incomingCall;
+            Toast.makeText(Call2.this, "incoming call", Toast.LENGTH_SHORT).show();
+            call.answer();
+            call.addCallListener(new SinchCallListener());
+            button.setText("Hang Up");
+        }
+
+
+    }
+}
+_________________________________________________________
+-Video Call:
+
+private static final String APP_KEY = "6dbf737f-7e21-4d50-ab13-13baf5533738";
+    private static final String APP_SECRET = "szhVqF9hJE2grBwFTmMJvA==";
+    private static final String ENVIRONMENT = "clientapi.sinch.com";
+
+    private Call call;
+    private TextView callState;
+    private SinchClient sinchClient;
+    private Button button;
+    private String callerId;
+    private String recipientId;
+    LinearLayout aff;
+    LinearLayout aff2;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_call2);
+
+        Intent intent = getIntent();
+        callerId = intent.getStringExtra("callerId");
+        recipientId = intent.getStringExtra("recipientId");
+        aff=(LinearLayout)findViewById(R.id.aff);
+        aff2=(LinearLayout)findViewById(R.id.aff2);
+
+        sinchClient = Sinch.getSinchClientBuilder()
+                .context(this)
+                .userId(callerId)
+                .applicationKey(APP_KEY)
+                .applicationSecret(APP_SECRET)
+                .environmentHost(ENVIRONMENT)
+                .build();
+
+        sinchClient.setSupportCalling(true);
+        sinchClient.startListeningOnActiveConnection();
+        sinchClient.start();
+
+        sinchClient.getCallClient().addCallClientListener(new CallClientListener() {
+            @Override
+            public void onIncomingCall(CallClient callClient, Call call) {
+
+
+                Toast.makeText(Call2.this, "incoming call", Toast.LENGTH_SHORT).show();
+                call.answer();
+                call.addCallListener(new VideoConfigListener());
+                button.setText("Hang Up");
+
+
+                VideoController vc = sinchClient.getVideoController();
+                View myPreview = vc.getLocalView();
+                View remoteView = vc.getRemoteView();
+                aff.addView(myPreview);
+                aff2.addView(remoteView);
+            }
+        });
+
+        button = (Button) findViewById(R.id.button);
+        callState = (TextView) findViewById(R.id.callState);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (call == null) {
+                    call = sinchClient.getCallClient().callUserVideo(recipientId);
+                    call.addCallListener(new VideoConfigListener());
+
+                    button.setText("Hang Up");
+                } else {
+                    call.hangup();
+                }
+            }
+        });
+    }
+
+
+
+    public class VideoConfigListener implements VideoCallListener {
+        @Override
+        public void onVideoTrackAdded(Call call) {
+            // Get a reference to your SinchClient, in the samples this is done through the service interface:
+            VideoController vc = sinchClient.getVideoController();
+            View myPreview = vc.getLocalView();
+            View remoteView = vc.getRemoteView();
+            aff.removeAllViews();
+            aff2.removeAllViews();
+            aff.addView(myPreview);
+            aff2.addView(remoteView);
+
+            // Add the views to your view hierarchy
+        }
+
+        @Override
+        public void onVideoTrackPaused(Call call) {
+
+        }
+
+        @Override
+        public void onVideoTrackResumed(Call call) {
+
+        }
+
+        @Override
+        public void onCallProgressing(Call call) {
+            callState.setText("ringing");
+        }
+
+        @Override
+        public void onCallEstablished(Call call) {
+            callState.setText("connected");
+            setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+
+
+        }
+
+        @Override
+        public void onCallEnded(Call call) {
+            call = null;
+            SinchError a = call.getDetails().getError();
+            button.setText("Call");
+            callState.setText("");
+            setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+
+        }
+
+        @Override
+        public void onShouldSendPushNotification(Call call, List<PushPair> list) {
+
+        }
+    }
+
+     
+}

@@ -66,6 +66,8 @@ slidingPanel=(SlidingUpPanelLayout)findViewById(R.id.sliderPan);
 slidingPanel.setShadowHeight(0);//pour le shadow ..
 slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);//ce state indique l ouverture de slide
 slidingPanel.getPanelState();//recuperation de state ouvert ou fermé ..
+slidingPanel.setTouchEnabled(true) // cette méthode permet d'activer ou désactiver le swipe 
+slidingPanel.setDragView(view) // permet d'affecter le swipe que lors qu on swipe un view spécifique et non pour la fenetre ..
 slidingPanel.setParallaxOffset(200);//pour animate le div au desus au meme temp de slide
 //Callback de slider ou cas ou ouvrir ou fermer ..
 slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {

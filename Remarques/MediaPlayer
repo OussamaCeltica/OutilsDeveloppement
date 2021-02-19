@@ -19,6 +19,51 @@ progress = new ProgressDialog(Accueil.this); // activité non context ..
                 progress.dismiss();
                 Log.e("ttt","GOOOOD");
                 mp.start();
+
+                /*
+                changeAudioState(progressBar,currentTime); if you use seekbar
+                 progressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                @Override
+                                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                                    if (b){
+                                        mediaPlayer.seekTo(i);
+                                    }
+                                }
+
+                                @Override
+                                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                }
+
+                                @Override
+                                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                }
+                            });
+              */ suivi le Stream comme youtube ..
+
+*
+                //region stream bar
+                            mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                                @Override
+                                public void onBufferingUpdate(MediaPlayer mediaPlayer, int percent) {
+                                    int buffPos=(int)(percent*mp.getDuration()/100);
+
+                                    Log.e("sss",percent+" ");
+
+                                    progressBar.setSecondaryProgress(buffPos);
+
+
+                                    Log.e("sss",buffPos+" ratio");
+
+
+                                }
+                            });
+                            //endregion
+
+              */
+
+
             }
         });
 
@@ -27,11 +72,37 @@ progress = new ProgressDialog(Accueil.this); // activité non context ..
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.setDataSource(this, uri);
             mediaPlayer.prepare();
+            //mediaPlayer.prepareAsync(); == pour ne pas bloqué UI
 
         } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
         } catch (IllegalStateException e) {
+                        e.printStackTrace();
         } catch (IOException e) {
+                        e.printStackTrace();
         }
+//if you need to use seekBar add this function:
+
+
+    private void changeAudioState(final SeekBar progressBar, final TextView currentTime){
+        progressBar.setProgress(mediaPlayer.getCurrentPosition());
+
+        DateFormat df = new SimpleDateFormat("HH:mm:ss");
+        String time = df.format(mediaPlayer.getCurrentPosition());
+        currentTime.setText(time+"");
+
+        if (mediaPlayer.isPlaying()){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    changeAudioState(progressBar,currentTime);
+                }
+            }, 1000);
+        }
+
+    }
+
+=== Custom SeekBar: https://a-renouard.developpez.com/tutoriels/android/custom-progress-seek-bar/
 __________________________________________________________
 
 -Play from assets:

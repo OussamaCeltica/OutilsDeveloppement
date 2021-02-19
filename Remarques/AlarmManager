@@ -1,7 +1,7 @@
 -L utilisation de alarmManger dans le cas ou vous voulez exécuter un code dans un temps précis , ou répéter une exécution dans chaque periode précise ... etc (voir documentation)
 
 -Pour Répéter un job dans une periode précise (upper than 1 minute):
-il faut crré une class qui hérité de BroadcastReceiver et dans onREceive faire le job a répéter (N Oublier pas de déclarer dans Manifest)
+il faut crée une class qui hérité de BroadcastReceiver et dans onREceive faire le job a répéter (N Oublier pas de déclarer dans Manifest)
 
 
 AlarmManager alarmMgr;
@@ -16,9 +16,10 @@ AlarmManager alarmMgr;
                     AlarmManager.ELAPSED_REALTIME + 1000(Temp départ),
                     AlarmManager.ELAPSED_REALTIME(Temp répéter), alarmIntent);
 
-
+set méthode marche bien pour les télé performant et surtt en utilisant le chargeur , donc il faut bien pensé que l'exactitude n'est pas garantit
+donc il faut pensé a setExactAndAllowWhileIdle() .. PS: cette méthode ne marche pas avec API under 23 donc il faut pensé a WorkManager.
 ___________________________________________________________
-Pour une exécution less than 1 minute:
+Pour une exécution less than 1 minute: ====== Deprecated , show next Session
 
 dans le REceiver:
 public class AlarmReceiver extends BroadcastReceiver {
@@ -68,4 +69,17 @@ if(!AlarmReceiver.isRunning) {
 
         }
 
+_____________________________________________
+Pou une éxécution en background inferieur a 1 min il faut d'abord autorisé l'economisation de la battery puis:
 
+
+ alarmMgr = (AlarmManager) getSystemService(ALARM_SERVICE);
+            Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+            alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 111, intent, 0);
+
+
+            alarmMgr.setExactAndAllowWhenIdle(AlarmManager.RTC_WAKEUP,
+                    AlarmManager.RTC + (temp depart ex: after 5 second: System.CurrentTime + 5*1000), alarmIntent);
+
+
+puis dans le receiver faire une nouvelle appel a cette méthode au dessus

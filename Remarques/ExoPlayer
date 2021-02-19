@@ -1,0 +1,110 @@
+ExoPlayer:
+
+-dans app.module:
+ implementation 'com.google.android.exoplayer:exoplayer:2.11.4'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.11.4'
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.11.4'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.4'
+
+
+
+-il a plusieurs de MediaSource c est a dire le type de media qu il va lire soit des videos lives HLS et DASH et SmoothSTREAM soit des video normal .... (voir la documentation)
+
+-code pour HLS:
+====== Pour les différents callback comme onPlayCHanged , onBufferedStream , onSeekTo ... etc il faut appelé  player.addListener(new Player.EventListener()
+
+ 
+
+
+ playerView=(PlayerView)findViewById(R.id.video_view);
+
+        // Create a data source factory.
+        DataSource.Factory dataSourceFactory =
+                new DefaultHttpDataSourceFactory(Util.getUserAgent(getApplicationContext(), "IPTV-CELTICA"));
+// Create a HLS media source pointing to a playlist uri.
+        String lien="http://163.172.39.215:25461/live/line/C4@!a3a1@!w72A/23.m3u8";
+        HlsMediaSource hlsMediaSource =
+                new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(lien));
+// Create a player instance.
+
+
+         SimpleExoPlayer player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
+        playerView.setPlayer(player);
+// Prepare the player with the media source.
+
+
+        player.prepare(hlsMediaSource);
+        player.setPlayWhenReady(true);
+
+
+        player.addListener(new Player.EventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                Toast.makeText(getApplicationContext(),"play",Toast.LENGTH_LONG).show();
+            }
+        });
+
+======================================================
+-Pour Lire un fichier local qui contient des LIVE from serveur il faut que:
+         playerView=(PlayerView)findViewById(R.id.video_view);
+
+        // Create a data source factory.
+        DataSource.Factory dataSourceFactory =
+                new DefaultDataSourceFactory(getApplicationContext(), "IPTV-CELTICA");
+// Create a HLS media source pointing to a playlist uri.
+
+        SimpleExoPlayer player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
+        playerView.setPlayer(player);
+// Prepare the player with the media source.
+
+        player.addListener(new Player.EventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                Toast.makeText(getApplicationContext(),"play",Toast.LENGTH_LONG).show();
+            }
+        });
+HlsMediaSource hlsMediaSource =
+                        new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.fromFile(new File(MainActivity.this.getExternalFilesDir(null)+"/celtica_iptv.m3u")));
+                i++;
+
+
+                player.prepare(hlsMediaSource);
+                player.setPlayWhenReady(true);
+
+
+__________________________________________
+-Creation d une playlist:
+
+playerView=(PlayerView)findViewById(R.id.video_view);
+
+        // Create a data source factory.
+        DataSource.Factory dataSourceFactory =
+                new DefaultHttpDataSourceFactory(Util.getUserAgent(getApplicationContext(), "IPTV-CELTICA"));
+        List<MediaSource> playlist = new ArrayList<>();
+        SimpleExoPlayer player = new SimpleExoPlayer.Builder(getApplicationContext())
+                .build();
+        playerView.setPlayer(player);
+
+//ici la config de playlist avec concatesource ..
+          forEach((MediaFile)->{ 
+ 
+                       HlsMediaSource hlsMediaSource =
+                               new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(MediaFile));
+                       playlist.add(hlsMediaSource);
+
+                   });
+
+                   ConcatenatingMediaSource concatenatedSource = new ConcatenatingMediaSource(playlist.toArray(new MediaSource[playlist.size()]));
+
+                   
+                       player.prepare(concatenatedSource);
+                       player.setPlayWhenReady(true);
+
+                 
+
+                   player.addListener(new Player.EventListener() {
+                       @Override
+                       public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                           Toast.makeText(getApplicationContext(),"play",Toast.LENGTH_LONG).show();
+                       }
+                   });

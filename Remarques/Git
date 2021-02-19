@@ -10,14 +10,20 @@
    git commit -m "message"
    git push -u origin master // origin master si la branche que je veut commité .. on peut faire "origin master mybranch"
 
+
+-To push un related add to push command:   --allow-unrelated-histories
+-forcer le push: git push -u origin master --force
 _______________________________________________
 -Work with branch:
 git branch == affciher tous vos branche
 
-git checkout -b nameBranch == créé une nouvelle branche PS: cette branche est une fille de la branhce cuurente ex: master nameBranche
+== créé une nouvelle branche PS: cette branche est une fille de la branhce cuurente ex: master nameBranchegit:
+ checkout -b nameBranch
 
-git checkout nameBracnh == acceder au nameBranch
+== acceder au nameBranch:  git checkout nameBracnh 
 
+
+delete branch: git branch --delete --force 
 
 
 
@@ -28,7 +34,28 @@ git merge nameBranch == merger la branche courante avec nameBranch
 Pour le merge:
 -si le merge contient un nouveau file , pas de probleme 
 -si le meme fichier a de contenue différent donc un conflit , et dans ce fichier doit appairaitre les conflit , vous pouvez les régler
-puis faire git commit puis PUSH ..
+puis save and:
+git add . 
+git commit
+git PUSH ..
 
 -si vous voulez copier le contenue d une branche dans une autre:
 git merge master --strategy-option theirs ===> copier le contenue de MASTER dans la branche courante
+
+
+
+____________________________________________
+-Import/Export Repository:
+-Remplacer My_Github_Repository on server by my Local git_repository == IT S MEAN EXPORT TO SERVER:
+
+git push --mirror https://github.com/OussamaCeltica/MergeMerge 
+
+-Import from github:
+ouvrir le dossier de travail avec le terminal puis:
+1- git clone --bare  https://github.com/OussamaCeltica/MergeMerge.git
+2- git init //pour créé le dossier de travail ..
+3- cp -a MyReposName.git/. .git/  ##copier le contenue de cette repo dans le repos de travail ..
+4- supp le repo téléchargé rm -rf RepositoryName
+5-git config --unset core.bare
+
+

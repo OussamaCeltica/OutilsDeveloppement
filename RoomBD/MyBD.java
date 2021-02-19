@@ -1,13 +1,12 @@
-package com.example.celtica.orm_application;
+package com.celtica.doctor.BD;
 
 
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.migration.Migration;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Context;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 
 /**
  * Created by celtica on 25/03/18.
@@ -18,15 +17,17 @@ public class MyBD {
     private static MyBD instance =null;
     public DB db;
 
-    @Database(entities = {/* le je met mes table ex: Product.class,ProduitEnFact.class*/}, version = 0,exportSchema = true)
+    @Database(entities = {User.class/* le je met mes table ex: Product.class,ProduitEnFact.class*/}, version =1,exportSchema = true)
     public static abstract class DB extends RoomDatabase {
         //here we get our Entity DAO (pour les accées au tables  c a d les requette...)
         //public abstract Product.ProductDAO getPrDAO();
         //public abstract ProduitEnFact.ProduitEnFactDAO getPrFactDao();
 
+        public abstract User.UserDAO getUserDAO();
+
     }
 
-    private MyBD(AppCompatActivity c){
+    private MyBD(Context c){
        db = Room.databaseBuilder(c, DB.class, "room_bd")
                 .allowMainThreadQueries()
                 //here we can add migration (si le shéma de bd été changé ..)
@@ -34,7 +35,7 @@ public class MyBD {
 
     }
 
-    public  static MyBD getInstance( AppCompatActivity c){
+    public  static MyBD getInstance(Context c){
         if (instance==null) {
             instance = new MyBD(c);
         }

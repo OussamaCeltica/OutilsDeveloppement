@@ -11,7 +11,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 import java.io.File;
@@ -32,8 +32,6 @@ import okhttp3.Response;
 
 import io.github.lizhangqu.coreprogress.ProgressHelper;
 import io.github.lizhangqu.coreprogress.ProgressListener;
-import io.github.lizhangqu.coreprogress.ProgressUIListener;
-
 
 
 public class PostServerRequest5 {
@@ -50,8 +48,8 @@ public class PostServerRequest5 {
 
      -Pour la methode sendWithIMage == destiné au upload des image avec
      qlq data comme un nom specifique ou descreption .. etc pour faire il faut lui
-     donné un hashMap contenant des des donné et un arrayList de type Uri contenant des uri récupéré dans
-     activityresult d apres le choix d image from galery et les envoyé et traité en php comme un tableau
+     donné un hashMap contenant des  donné et un arrayList de type Uri contenant des uri récupéré dans
+     activityresult d'apres le choix d'image from galery et les envoyé et traité en php comme un tableau
      de fichier avec les methode FILE et pour les data avec POST ..
 
      -Pour read== il suffit juste d envoyé la requete pour php et récupéré les data dans un string ..
@@ -149,7 +147,7 @@ public class PostServerRequest5 {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
 
-                        queryResult=response.body().string().replaceAll("\n","");
+                        queryResult=response.body().string().trim();
                         d.After(queryResult);
                     }
                 });
@@ -177,6 +175,7 @@ public class PostServerRequest5 {
                             .readTimeout(15, TimeUnit.MINUTES)
                             .build();
                 }
+
 
                 MultipartBody.Builder mb = new MultipartBody.Builder();
 
@@ -208,7 +207,7 @@ public class PostServerRequest5 {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
 
-                        queryResult=response.body().string().replaceAll("\n","");
+                        queryResult=response.body().string().trim();
                         d.After(queryResult);
                     }
                 });
@@ -219,6 +218,7 @@ public class PostServerRequest5 {
 
         t.start();
     }
+
 
     public void send(final HashMap<String,String> data, final doBeforAndAfterGettingData d){
 
@@ -265,7 +265,7 @@ public class PostServerRequest5 {
                     public void onResponse(Call call, Response response) throws IOException {
 
 
-                       queryResult=response.body().string().replaceAll("\n","");
+                       queryResult=response.body().string().trim();
                         d.After(queryResult);
 
                         /*-------- Manipulation de resultats ----------
@@ -301,7 +301,7 @@ public class PostServerRequest5 {
 
     PS: le Hashmap contient les données comme clé/valeur , dans php: $valeur=$_POST['clé'];
      */
-    public void sendWithFiles(final HashMap<String,String> data, final ArrayList<Uri> files, final AppCompatActivity c , final doBeforAndAfterGettingData d){
+    public void sendWithFiles(final HashMap<String,String> data, final ArrayList<Uri> files, final AppCompatActivity c , final doBeforAndAfterUpload d){
 
         context=c;
         d.before();
@@ -362,7 +362,14 @@ public class PostServerRequest5 {
 
                 RequestBody r=ProgressHelper.withProgress(request_body, new ProgressListener() {
                     @Override
-                    public void onProgressChanged(long numBytes, long totalBytes, float percent, float speed) {
+                    public void onProgressChanged(final long numBytes, final long totalBytes, final float percent, final float speed) {
+                        c.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                d.onProgress(numBytes,totalBytes,percent,speed);
+                                Log.e("prr",percent*100+" %");
+                            }
+                        });
 
                     }
                 });
@@ -370,7 +377,7 @@ public class PostServerRequest5 {
 
                 Request request = new Request.Builder()
                         .url(url+urlWrite)
-                        .post(request_body)
+                        .post(r)
                         .build();
 
 
@@ -473,6 +480,10 @@ public class PostServerRequest5 {
         void echec(Exception e);
         void After(InputStream result);
 
+    }
+
+    public interface doBeforAndAfterUpload extends doBeforAndAfterGettingData {
+        void onProgress(long numBytes, long totalBytes, float percent, float speed);
     }
 
     //cette classe permet de récupéré le réel chemin d un fichier depuis un Uri ..

@@ -1,0 +1,8 @@
+Fragment:
+
+dans la declaration d un fragment dans un fichier XML u need to give it a unique id
+
+-add fragment to layout:
+ FragmentManager fm = getSupportFragmentManager();
+                        fm.beginTransaction().add(serverListUI.getId(), new ServerButton(servers.getString(i)), "fragmentone"+i).commit();
+

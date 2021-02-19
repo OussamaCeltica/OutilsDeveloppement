@@ -1,0 +1,2 @@
+Remarques:
+Si "hardwareAccelerated=false" dans le manifest alors le radius pour les childs ne marche pas et elevation ne marche pas
